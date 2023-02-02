@@ -1,0 +1,62 @@
+\section{Methodology}\label{methodology}
+
+% This is the section in which you should describe your approach at a sufficient level of details, in 
+% such a way that a reader could replicate the research you have done. To achieve this, you need 
+% to describe clearly how you carried out your project step by step. First, provide a description of all 
+% the algorithms that have been used. You need to include all relevant information to allow a reader 
+% to follow what you have done, at the same time you should refer to the original works for all details 
+% that are not relevant. Second, you should also provide a description of the data sets that have 
+% been used in your project, their main properties, and why those data sets are suitable to answer 
+% the research question.  
+% If you have mathematical lemmas/theorems that are relevant to your report, then these can also 
+% be placed in this section. If these lemmas/theorems are not your own work, you should cite the 
+% original source. If they are your own, then you should give a proof. (This does not mean that every 
+% project report needs to contain proofs. It depends very much on the work you have 
+% done. Also in academia articles vary considerably in the balance they strike between 
+% experiments, algorithms and mathematical theory).
+
+% small intro 
+As mentioned before, the research focus was on configuring an AGV for a miniaturized insect farm. The focus was to simulate and experiment with an AGV that is able to map and navigate in any given environment. To ensure good comprehension, the configuration components used have been split up and are explained separately from one another.
+
+\subsection{Prior to Setup}
+In order to be able to use the AGV's internal systems some prerequisites were required in terms of software, packages, and operating system. Firstly, in order to run or manage any ROS-related project a Linux system is needed. As most of the files of this specific AGV have been developed using ROS Melodic, a compatible Linux distribution namely, Ubuntu 18.04 was utilized. 
+Once the Linux distribution was installed, the relevant ROS and python packages were installed and run.
+
+\subsection{Setup}
+The AGV's internal computer (Raspberry PI) can connect to 3 USB ports and an HDMI port which allows for configuration by connecting to a monitor, keyboard, and mouse.
+Once this is done, the computer can be visible and the setup process can begin. 
+The primary step included installing the VNC software on the control PC. VNC is a cross-platform screen-sharing tool designed for remote computer control. For this control to happen it was needed to obtain the IP address of the AGV, hence the keyboard and mouse were essential during the initial setup. Once both, the AGV and the PC, are connected to the same internet network, the screen sharing can begin and the AGV can be disconnected and released in the Environment while its internal computer is shown on the PC.       
+All ROS packages are downloaded directly into the Linux build.
+
+\subsection{Controllers}
+There are four different ways by which a user can control the AGV's position and trajectory at any given time:
+\begin{itemize}
+  \item KeyBoard Commands - by running a pre-existing my\_teleop launch file in the terminal, it is specified which key corresponds to which direction.
+  \item PS2 controller - by running a pre-existing PS2 launch file. The navigation happens using the arrows on the controller, and L1/R1 to for rotating the AGV. 
+  \item RVIZ - using the RVIZ software one can estimate the current location of the ROS object as well as navigate to a new point.
+  \item Terminal - Using our own Python script inspired by the TurtleBot scripts. Users can enter the desired x,y, and z coordinates in the terminal and wait for the AGV to reach the goal. The z coordinate is the AGV's angle of rotation.
+\end{itemize}
+
+\subsection{Gmapping}\label{gmapping} %need to update
+In order to map the AGV surroundings a method named Gmapping is used. 
+Gmapping is an efficient particle filter (\cite{4084563}) mapping algorithm that builds a 2D map .
+It is a SLAM algorithm based on 2D LIDAR using the RBPF (Rao-Blackwellized Particle Filters) algorithm to complete the construction of a two-dimensional grid map. Gmapping can build indoor maps in real-time and requires less computation whilst achieving higher accuracy compared to the Cartographer algorithm developed by Google in making small scene maps.
+This is mainly due to its use of wheel odometer information which aids in providing the prior pose of the AGV.
+
+In order to create a full digital blueprint of the map. The AGV is used to scan the entire area and upload the data into a map file. The AGVs odometry is used to scan the walls which are then stored. An example visualization of the resulted map can be seen in figure \ref{fig:app:map}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth,height=0.45\textheight,keepaspectratio]{images/Map.png}
+    \caption{Map built with Gmapping}
+    \label{fig:app:map}
+\end{figure}
+
+\subsection{Localization and Navigation}
+To perform autonomous movement, the AGV uses the adaptive Monte Carlo Localization (AMCL; \cite{amcl}) ROS package together with Gmapping (\ref{gmapping}), and computes the path planning using Dijkstra's algorithm (\cite{dijkstra}) to find the shortest path based on its operational environment. AMCL is a probabilistic localization system for robots moving in 2D, such as our AGV. It uses a sample-based adaptive particle filter to track the pose of a robot against a known map. When the robot moves along the planned path, AMCL generates \textit{N} samples that predict the robot’s position after a motion command. The sensor readings are incorporated by re-weighting these samples and normalizing the weights. Additionally, a few random uniformly distributed samples are added as it helps the robot recover itself in cases where it has lost track of its position. The sample set is then used for decision-making of the robot's movement. AMCL does not handle a laser that moves relative to the AGV and works only with laser scans and laser maps. 
+
+% NOTES:
+% http://robots.stanford.edu/papers/fox.aaai99.pdf
+% https://roboticsknowledgebase.com/wiki/common-platforms/ros/ros-mapping-localization/
+% https://roboticsknowledgebase.com/wiki/state-estimation/adaptive-monte-carlo-localization/#use-of-adaptive-particle-filter-for-localization
+% Now as the robot moves forward, we generate new samples that predict the robot’s position after the motion command. Sensor readings are incorporated by re-weighting these samples and normalizing the weights. Generally it is good to add few random uniformly distributed samples as it helps the robot recover itself in cases where it has lost track of its position. In those cases, without these random samples, the robot will keep on re-sampling from an incorrect distribution and will never recover. The reason why it takes the filter multiple sensor readings to converge is that within a map, we might have dis-ambiguities due to symmetry in the map, which is what gives us a multi-modal posterior belief.

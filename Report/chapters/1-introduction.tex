@@ -1,0 +1,36 @@
+\section{Introduction}\label{introduction}
+% ERIC
+The world is facing a number of global issues, from which some of the biggest are climate change, a looming environmental crisis, and pressing food security issues paired with a growing population. Climate change causes rising temperatures, which are fueling environmental degradation, natural disasters, weather extremes, and food and water insecurity (\citetalias{climatechange}). From 1880 to 2012, the average global temperature increased by 0.85°C, and today 90 percent of disasters are classed as weather- and climate-related (\citetalias{globalissues}). According to \citetalias{ipcc}, human-caused CO2 emissions would need to fall by around 45 percent from 2010 levels by 2030, to limit global warming to 1.5°C. With current emissions, temperatures could rise to above three degrees Celsius by 2100, causing further irreversible damage to our ecosystems (\citetalias{climatecrisis}).
+
+In light of the aforementioned issues, insect farming looks to be a viable and sustainable solution for a better world. They can be used to produce food in different forms, animal feed, and effective fertilizer. Edible insects supply amounts of protein, fat, vitamins, and minerals comparable to those of meat (\cite{BAIANO2020}). They grow rapidly using fewer resources than conventional livestock and convert feed into edible weight efficiently (\cite{BAIANO2020}). This is important considering that the global population is expected to increase by 2 billion persons in the next 30 years (\citetalias{population}). It is why insects and insect farms could play an important role, especially in places where the availability of nutritious foods is lacking. In addition, insect farms produce significantly fewer CO2 emissions and need less surface area (\cite{buzzfood}). 
+
+Since the first industrial revolution, optimizing production times and cost has been a primary objective for industry, and this is no different for insect farming. Farm automation technology increases productivity and the yield and rate of production, therefore reducing costs for consumers (\cite{ku2021}). In addition, automation technologies can reduce the ecological footprint of farming. According to \cite{Lynch}, traditional production lines are inflexible and any re-arrangement or change in the manufacturing process would entail considerable investment. In contrast, flexible manufacturing systems (FMS), such as insect farms, allow for comparatively cheaper adjustments.
+
+This paper considers “vertical” insect farms; they consist of an area that is filled with crates, stacked on top of each other, in which the insects are kept in habitable conditions. These boxes are then moved around to other areas for handling. Autonomous Guided Vehicles (AGVs) are essential for realizing such autonomous insect farms since their mobility allows for dynamic routing and (sometimes) detours from the given layout. They can be used to fetch various boxes from the vertical farm and bring them to one area where another robot or human handles them accordingly. This stimulates the use of AGVs in insect farms.
+
+In this paper, we aim to configure an AGV that is capable of transporting payload back and forth autonomously in a miniaturized insect farm, in a way that works in a synchronized network. This research is part of a larger research project with multiple teams, and it is being developed in cooperation with a customer company, CoRoSect. This paper puts emphasis on making the AGV flexible and adjustable to environmental changes. Additionally, the AGV design should not limit the number of robots deployed to one. The goal is to produce an AGV configuration that should be controllable by non-experts and allow the customer to understand how AGVs (with other robots and technologies) can enable automated insect farms. These goals are evaluated through multiple experiments.
+
+We propose a transport robot for an insect farm using an AGV equipped with a 360° LIDAR sensor and an RGB camera. The AGV uses Gmapping for map discovery, adaptive Monte Carlo Localization (\cite{amcl}) combined with Gmapping as a ROS service deployed over a local network for localization, and the AGV's built-in packages for path finding and navigation. The research is done using the Elephant Robotics MyAGV.
+
+Three main Research Questions are explored in this paper:
+\begin{enumerate}
+    \item How well does the AGV manage to navigate within a mapped area?
+    \item How accurate is the map produced using the GMapping algorithm?
+    \item How does the distance from the AGV and the height of the object affect the ability to detect it?
+\end{enumerate}
+
+In the following parts of the paper, the work of similar research by other groups is reviewed, followed by the used methodology, the conducted experiments, and the corresponding results obtained for this paper. Lastly, a discussion and conclusion are offered, summarizing what was found.
+
+\subsection{Related Work}
+% ERIC
+Needless to say, a lot of research has been done on AGVs. \cite{Lynch} gives an overview on different AGV types, sensor types, and navigation and localization systems. In this project, we make use of some of the navigation systems and sensor types. However, this paper focuses on a different type of problem, configuring one AGV.
+
+% central node+camera
+\cite{kostov2015} did a study using a Lego Mindstorm robot where they used a command center that sends commands to the desired robot, on a planned track. They managed to program the AGV to move from place  'A' to 'B', following taped floor lines toward its goal. \cite{zheng2022} did a similar study where they make use of an overhead camera that captures all information on the area through imaging and data about the AGV, through sensors. They used a master computer that handles the commands for the trackless guidance and sends the data for the AGV. The  approach in this study is similar to these, a control node computer is used which handles heavy computations and sends the data to the AGV.
+
+% lidar+localization
+\cite{ronzini2011} developed a laser scanner-based global localization system where the AGV locates its position based on detecting landmarks with its laser scanner in a known environment. Their proposed method takes into account measurement errors and false detection, due to reflecting surfaces present in the environment. In this paper, landmarks are used in a known environment for localization purposes with LIDAR. However, a combination of already existing libraries is used. \cite{CHIKURTEV2021} uses a ROS-based four-wheeled mobile robot that navigates in an environment, using a combination of LIDAR and GPS as basic sensors. A similar AGV  is used with ROS and its packages to navigate through the insect farm. Nonetheless, the GPS systems are not used.
+
+% ROS robots
+\cite{walenta2017} did a study where they developed a decentralized system for AGV control using ROS. They created a control system that has multiple components, all implemented using different ROS packages and combined into one system. Their study is similar to this one and they make use of ROS packages that are different from the ones used here.
+

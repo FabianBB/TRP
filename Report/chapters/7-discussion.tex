@@ -1,0 +1,19 @@
+\section{Discussion}
+The experiments demonstrate the capability of our AGV to autonomously navigate through an area using its LIDAR sensor, AMCL and the GMapping algorithm. It has the capacity to recognize objects, accurately generate a map and navigate through its environment with a high degree of precision. This has the potential to improve efficiency and safety in industrial applications such as insect farming.
+
+However, there are also some limitations to the current implementation. For instance, the AGV is limited to 2D navigation, which may not be suitable for all environments. Additionally, the AGV is dependent on a pre-existing map of the environment, which can be time-consuming and expensive to generate. Recognizing objects that are below the LIDAR height or farther than 8 meters away are also not accurately detected (see Table \ref{table:lidartable}). 
+The surface does not have a major affect on the speed or performance of the AGV's traversal (see Table \ref{table:SurfaceTable}).
+
+These limitations can be addressed in future work by integrating 3D mapping and localization techniques, as well as incorporating real-time self-mapping capabilities.
+
+
+
+% This section has the purpose of bringing everything together. Results are interpreted and they are 
+% used to answer the research question(s). Namely, this is not only for describing what the results 
+% show, but also, why they show this, using evidence from previous studies as well to backup your 
+% explanation. You should also mention how your findings advance the state of the art (what are 
+% the  novelty  factors), and  also whether somehow they  disagree  with  what  previously  found  by 
+% other researchers, and why this may have happened.  
+% This is also the place to mention if there were any issues (for instance, if your results were different 
+% from  expectations)  and  how  those  issues  were  or  could  have  been  solved.  Also,  report  any 
+% limitation of your study, which should be eventually addressed in future studies. 

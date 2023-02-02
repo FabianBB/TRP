@@ -1,0 +1,78 @@
+\section{Results}
+
+% This section is strictly for the purpose of presenting the results of all 
+% analyses/simulations/experiments  described  in  the  previous  section  “Experiments”,  without 
+% interpretation. Save your interpretation of the results for the Discussion section. Results should 
+% be reported as clearly and concisely as possible, to be effective. This can also be achieved by 
+% using tables or figures. Remember to give each figure a caption describing shortly what the figure 
+% demonstrates and each table at least a title. In addition, you have to refer to each table and figure 
+% in the main text (e.g. “Figure 2.1 shows [...]” ). .   
+% In  case  you  have  many  different  algorithms,  it  may  be  an  option  to  interleave  algorithms  with 
+% results and have then a comparison section in the Results section. 
+
+% Navigation Results
+Results from the navigation experiments. 
+
+* Unfortunately the AGV malfunctioned before our experiments were concluded.
+\newline
+
+% Table with LIDAR data:
+Results from the LIDAR experiments.
+
+\begin{table}[H]
+\def\arraystretch{1.3}
+\centering
+\begin{tabular}{l|rrr|l}
+\cline{2-4}
+                                        & \multicolumn{3}{c|}{\textbf{Performance}}                                         &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{}                  & \multicolumn{1}{c|}{\textbf{Accurate}}      & \multicolumn{1}{c|}{\textbf{Reduced}}       & \multicolumn{1}{c|}{\textbf{None}}                                             &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{Distance}} & \multicolumn{1}{r|}{\textit{0-8 m}}       & \multicolumn{1}{r|}{\textit{8+ m}}          & \textit{N/A}                                                                     &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{Height}}   & \multicolumn{1}{r|}{\textit{0.15-0.50 m}} & \multicolumn{1}{r|}{\textit{0.10-0.15 m}} & \textit{0-0.10 m}                                                            &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{Material}} & \multicolumn{1}{r|}{\textit{N/A}}             & \multicolumn{1}{r|}{\textit{Bright white}}  & \textit{\begin{tabular}[c]{@{}r@{}}Glass, Mirrors,\\ Transparent\end{tabular}} &  \\ \cline{1-4}
+\end{tabular}
+\caption{Data collected from the LIDAR experiments.}
+\label{table:lidartable}
+\end{table}
+
+
+% Mapping results
+Results from the mapping experiments. One pixel equates to a 10 x 10 $cm^2$.
+\newline
+
+\begin{table}[H]
+\def\arraystretch{1.2}
+\centering
+\begin{tabular}{l|rrr|l}
+\cline{2-4}
+                                     & \multicolumn{3}{c|}{\textbf{Mapping Accuracy}}                                                                               &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{}               & \multicolumn{1}{c|}{\textbf{Real \boldmath($cm^2$)}} & \multicolumn{1}{c|}{\textbf{Digital (pixels)}} & \multicolumn{1}{c|}{\textbf{Difference}} &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{A}}     & \multicolumn{1}{r|}{\textit{170}}    & \multicolumn{1}{r|}{\textit{166}}         & \textit{-4}                              &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{B}}     & \multicolumn{1}{r|}{\textit{88}}    & \multicolumn{1}{r|}{\textit{85}}          & \textit{-3}                              &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{C}}     & \multicolumn{1}{r|}{94}             & \multicolumn{1}{r|}{91}                   & -3                                       &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{D}}     & \multicolumn{1}{r|}{108}             & \multicolumn{1}{r|}{112}                  & +4                                       &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{E}}     & \multicolumn{1}{r|}{253}             & \multicolumn{1}{r|}{254}                  & +1                                       &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{Total}} & \multicolumn{1}{r|}{\textit{713}}    & \multicolumn{1}{r|}{\textit{708}}         & \textit{-5}                              &  \\ \cline{1-4}
+\end{tabular}
+\caption{Map data comparison.}
+\label{table:maptable}
+\end{table}
+
+
+% Surface results
+Results from the surface experiments, 
+the AGV travelled 2.25m on different surfaces.
+
+\begin{table}[H]
+\def\arraystretch{1.2}
+\centering
+\begin{tabular}{|r|r|r|}
+\hline
+\multicolumn{1}{|l|}{\textbf{Type of floor}} & \multicolumn{1}{l|}{\textbf{Time to complete}} & \multicolumn{1}{l|}{\textbf{Speed}} \\ \hline
+\textit{Vinyl sheets}                    & \textit{2.9s}                                  & \textit{0.77 m/s}                   \\ \hline
+\textit{Foam}                                & \textit{3.2s}                                  & \textit{0.7 m/s}                    \\ \hline
+\textit{Artificial grass}                    & \textit{3.2s}                                  & \textit{0.7 m/s}                    \\ \hline
+\textit{Wood}                                & \textit{3.0s}                                  & \textit{0.75 m/s}                   \\ \hline
+\end{tabular}
+\caption{Data collected from surface experiments.}
+\label{table:SurfaceTable}
+\end{table}

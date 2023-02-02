@@ -1,0 +1,45 @@
+\section{Implementation}\label{implementation}
+
+% In this section, provide information about the software implementation of the methods. You do 
+% not  have  to  provide  a  complete  description  or  user  documentation,  but  should  instead 
+% describe  the  basic  structure  of  the  implementation,  any  external  API,  and  any  innovative 
+% data structures or other software engineering techniques. UML diagrams are required to describe 
+% your software. If necessary, you can also add pseudo code. Please avoid copying code directly 
+% into your report.   
+% This section could be a subsection of the Methods section, especially if it is short.
+
+
+% notes
+% use of ros-melodic:
+
+All the separate software components for the AGV were implemented using ROS, an open-source middle ware for robotic platforms. ROS facilitates the tools and libraries needed to develop different robotics applications in different programming languages. In this study, ROS-Melodic is employed to establish communication between the robot and a control node, and between the control node and other components of the autonomous farm.
+
+% navigation package
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth,height=0.6\textheight,keepaspectratio]{images/Navigation.png}
+    \caption{Navigation Stack}
+    \label{fig:app:navigation}
+\end{figure}
+
+The navigation stack assumes that the robot is configured in a particular manner in order to run. Figure \ref{fig:app:navigation} displays an overview of this configuration. The white components are required components that are already implemented, the gray components are optional components that are already implemented, and the blue components must be created for each robot platform. 
+
+%In ROS, amcl is a node which uses a map, laser scans, and transform messages, and outputs pose estimates.
+
+% Rviz & simulation 
+\subsection{Rviz}
+Rviz is mainly a visualization tool used for plotting the AGV's mapping and navigation data. Additionally, it facilitates human-robot interaction during development, as it provides a GUI to invoke certain navigation subroutines. A 2D navigation goal can be set inside the map and the path-planning will then determine a possible path toward this data point. It is also possible to set a 2D pose  to fix the robots estimated location in a map. 
+
+% Odometry data intro
+The odometry system provides a locally accurate estimate of a robot’s pose and velocity based on its motion. The odometry information can be obtained from various sources such as IMU, LIDAR, RADAR, VIO, and wheel encoders. One thing to note is that IMUs drift over time while wheel encoders drift over the distance traveled, thus they are often used together to counter each other’s negative characteristics. Although the AGV from Elephant robotics is equipped to perform VIO odometry, this is not the case by default. Furthermore, there is no mention in the manual of any sensors for IMU odometry. So, it can be safely assumed that for the duration of this project we only used LiDAR data for tracking and localizing the robot.
+
+
+\subsection{Python interface}
+In order to read the coordinate system employed by the robot for navigation, which is determined by the metadata in the YAML and PGM files, we developed our own Python visualization app. It loads a pair of YAML and PGM files and displays the layout in a window. When the mouse hovers over said window, the window title immediately displays the coordinates (in meters) that the robot reads from that point. These coordinates can then be used as input to another Python script that performs autonomous navigation.
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[width=0.35\textwidth,height=0.45\textheight,keepaspectratio]{images/visappdemo.png}
+     \caption{Python map visualization app.}
+     \label{fig:app:map2}
+\end{figure}
