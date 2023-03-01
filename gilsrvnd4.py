@@ -7,7 +7,7 @@ import networkx as nx
 import time
 
 
-problem = tsplib95.load('Instances/pr107.tsp')
+problem = tsplib95.load('Instances/berlin52.tsp')
 print(problem.name)
 graph = problem.get_graph()
 print(graph)
@@ -85,6 +85,7 @@ def construct(alpha):
         s.append(c)
         r = c
         CL.remove(r)
+    print(s)
     return s
 
 
@@ -111,19 +112,26 @@ def RVND(s):
     while len(NL) > 0:
         n = random.choice(NL)
         if n == "swap":
+            print("swap")
             sprime = swap(s)
-
         elif n == "two_opt":
+            print("two_opt")
             sprime = two_opt(s)
-
         elif n == "reinsertion":
+            print("reinsertion")
             sprime = reinsertion(s)
-
         elif n == "or_opt2":
+            print("or_opt2")
             sprime = or_opt2(s)
-
         elif n == "or_opt3":
+            print("or_opt3")
             sprime = or_opt3(s)
+
+        print(s)
+        print(sprime)
+
+        print("cost(s): ", cost(s))
+        print("cost(sprime): ", cost(sprime))
 
         if cost(sprime) < cost(s):
             s = sprime
@@ -135,6 +143,7 @@ def RVND(s):
 
 
 # Swap Two customers of the tour are interchanged.
+# works
 def swap(s):
     sprime = s.copy()
     i = random.randint(1, len(s) - 1)
@@ -144,19 +153,10 @@ def swap(s):
 
 
 # 2-opt Two non-adjacent arcs are removed and another two are inserted in order to build a new feasible tour.
+# works
 def two_opt(s):
-    """
-
-    i = random.randint(1, len(s) - 1)
-    j = random.randint(1, len(s) - 1)
-    # take s[0] to s[i-1] and add them in order to sprime
-    sprime[1:i] = s[1:i]
-    # take s[i] to s[j] and add them in reverse order to sprime
-    sprime[i:j + 1] = s[j:i - 1:-1]
-    # take s[j+1] to end and add them in order to sprime
-    sprime[j + 1:] = s[j + 1:]
-    """
     sprime = s.copy()
+
     n = len(sprime)
     i = random.randrange(0, n)
     j = random.randrange(0, n)
@@ -182,11 +182,13 @@ def two_opt(s):
 
     # reverse
     sprime[i:j] = reversed(sprime[i:j])
+
     return sprime
 
 
 
 # Reinsertion One customer is relocated to another position of the tour.
+# works
 def reinsertion(s):
     sprime = s.copy()
     i = random.randint(1, len(s) - 1)
@@ -197,6 +199,7 @@ def reinsertion(s):
 
 
 # Or-opt2 Two adjacent customers are reallocated to another position of the tour.
+# works
 def or_opt2(s):
     sprime = s.copy()
     i = random.randint(1, len(s) - 1)
@@ -211,19 +214,22 @@ def or_opt2(s):
 
 
 # Or-opt3 Three adjacent customers are reallocated to another position of the tour.
+# TODO: doesnt work
 def or_opt3(s):
     sprime = s.copy()
-    i = random.randint(1, len(s) - 1)
-    j = random.randint(1, len(s) - 1)
 
-    c = sprime.pop(i)
-    sprime.insert(j, c)
+    n = len(sprime)
+    i = random.randrange(1, n - 2)
+    j = random.randrange(1, n - 2)
 
-    c = sprime.pop(i)
-    sprime.insert(j, c)
+    #consecutive 3
+    sub = sprime[i:i + 3]
 
-    c = sprime.pop(i)
-    sprime.insert(j, c)
+    # remove 3
+    lst = sprime[:i] + sprime[i + 3:]
+    #insert
+    sprime = lst[:j] + sub + lst[j:]
+
     return sprime
 
 
