@@ -6,13 +6,40 @@ import tsplib95
 import networkx as nx
 import time
 
+DEBUG = False
 
-problem = tsplib95.load('Instances/berlin52.tsp')
+problem = tsplib95.load('Instances/f10.tsp')
 print(problem.name)
 graph = problem.get_graph()
 print(graph)
 dist_matrix = nx.to_numpy_matrix(graph)
+print(dist_matrix)
+print("")
 
+
+# modify the dist matrix to make it a path
+# so everything should be infinity except for the diagonal
+def makePathMat(mat):
+    for i in range(len(dist_matrix)):
+        for j in range(len(dist_matrix)):
+            if abs(i - j) > 1:
+                dist_matrix[i, j] = math.inf
+    return mat
+
+# modify dist matrix randomly (with seed) to make it incomplete
+# some values should be inf (except the diagonal)
+# seed 2 does not work (makes inf solution)
+def makeIncompleteMat(mat, seed=0):
+    random.seed(seed)
+    for i in range(len(dist_matrix)):
+        for j in range(len(dist_matrix)):
+            if i != j:
+                if random.randint(0, 1) == 0:
+                    dist_matrix[i, j] = math.inf
+    print(mat)
+    return mat
+
+makeIncompleteMat(dist_matrix, 0)
 
 # cost function
 # assumes a return to depot at the end of the tour TODO: make this optional
@@ -22,7 +49,7 @@ dist_matrix = nx.to_numpy_matrix(graph)
 def cost(s, show=False):
     cost = 0
     for i in range(len(s) - 1):
-        cost += (len(s)-i-1) * dist_matrix[s[i], s[i + 1]]
+        cost += (len(s) - i - 1) * dist_matrix[s[i], s[i + 1]]
         print(cost) if show else None
 
     return cost
@@ -42,22 +69,23 @@ def cost(s, show=False):
 # the heuristic returns the best solution s* among all iterations.
 def gilsrvnd(IMAX, IILS, R):
     fstar = math.inf
+    sstar = []
     for i in range(IMAX):
         alpha = random.choice(R)
         s = construct(alpha)
-        sprime = s
+        sPrime = s
         iterILS = 0
         while iterILS < IILS:
             s = RVND(s)
-            if cost(s) < cost(sprime):
-                sprime = s
+            if cost(s) < cost(sPrime):
+                sPrime = s
                 iterILS = 0
-            s = Perturb(sprime)
+            s = Perturb(sPrime)
             iterILS += 1
-        if cost(sprime) < fstar:
-            sstar = sprime
-            fstar = cost(sprime)
-    return sstar
+        if cost(sPrime) < fstar:
+            sstar = sPrime
+            fstar = cost(sPrime)
+    return sstar if len(sstar) > 0 else sPrime
 
 
 # The constructive procedure, used to generate initial solutions, is described in Algorithm 2. Firstly,
@@ -85,7 +113,8 @@ def construct(alpha):
         s.append(c)
         r = c
         CL.remove(r)
-    print(s)
+        #print("construct", s)
+    #print("const", s)
     return s
 
 
@@ -109,29 +138,29 @@ def construct(alpha):
 
 def RVND(s):
     NL = ["swap", "two_opt", "reinsertion", "or_opt2", "or_opt3"]
+    sprime = s.copy()
     while len(NL) > 0:
         n = random.choice(NL)
         if n == "swap":
-            print("swap")
+
             sprime = swap(s)
         elif n == "two_opt":
-            print("two_opt")
+
             sprime = two_opt(s)
         elif n == "reinsertion":
-            print("reinsertion")
+
             sprime = reinsertion(s)
         elif n == "or_opt2":
-            print("or_opt2")
+
             sprime = or_opt2(s)
         elif n == "or_opt3":
-            print("or_opt3")
+
             sprime = or_opt3(s)
 
-        print(s)
-        print(sprime)
-
-        print("cost(s): ", cost(s))
-        print("cost(sprime): ", cost(sprime))
+        if DEBUG:
+            print(n)
+            print(s)
+            print(sprime)
 
         if cost(sprime) < cost(s):
             s = sprime
@@ -158,23 +187,8 @@ def two_opt(s):
     sprime = s.copy()
 
     n = len(sprime)
-    i = random.randrange(0, n)
-    j = random.randrange(0, n)
-
-    # stop overshoot
-    exclude = set([i])
-    if i == 0:
-        exclude.add(n - 1)
-    else:
-        exclude.add(i - 1)
-
-    if i == n - 1:
-        exclude.add(0)
-    else:
-        exclude.add(i + 1)
-
-    while j in exclude:
-        j = random.randrange(0, n)
+    i = random.randrange(1, n)
+    j = random.randrange(1, n)
 
     # ensure i < j
     if j < i:
@@ -184,7 +198,6 @@ def two_opt(s):
     sprime[i:j] = reversed(sprime[i:j])
 
     return sprime
-
 
 
 # Reinsertion One customer is relocated to another position of the tour.
@@ -202,33 +215,37 @@ def reinsertion(s):
 # works
 def or_opt2(s):
     sprime = s.copy()
-    i = random.randint(1, len(s) - 1)
-    j = random.randint(1, len(s) - 1)
+    i = random.randint(1, len(s) - 3)
+    j = random.randint(1, len(s) - 3)
 
-    c = sprime.pop(i)
-    sprime.insert(j, c)
+    # consecutive 2
+    sub = sprime[i:i + 2]
 
-    c = sprime.pop(i)
-    sprime.insert(j, c)
+    # remove 3
+    lst = sprime[:i] + sprime[i + 2:]
+    # insert
+    sprime = lst[:j] + sub + lst[j:]
     return sprime
 
 
 # Or-opt3 Three adjacent customers are reallocated to another position of the tour.
-# TODO: doesnt work
+# works
 def or_opt3(s):
+    #return s if True else s
     sprime = s.copy()
 
     n = len(sprime)
-    i = random.randrange(1, n - 2)
-    j = random.randrange(1, n - 2)
+    i = random.randrange(1, n - 4)
+    j = random.randrange(1, n - 4)
 
-    #consecutive 3
+    # consecutive 3
     sub = sprime[i:i + 3]
 
     # remove 3
     lst = sprime[:i] + sprime[i + 3:]
-    #insert
+    # insert
     sprime = lst[:j] + sub + lst[j:]
+
 
     return sprime
 
@@ -243,21 +260,41 @@ def or_opt3(s):
 # i = 2, j = 4, k = 6, l = 8
 # remove the arcs (2,3) (4,5) (6,7) (0,1)
 # insert the arcs (2,7) (3,6) (4,1) (5,0
+# works
 def Perturb(s):
     sprime = s.copy()
+
     # make four slices
     slen = int(len(sprime) / 4)
+    if DEBUG:
+        print("PERTURB")
+        print(sprime)
+        print("slen: ", slen)
+        print("len(sprime): ", len(sprime))
+
     p1 = 1 + random.randrange(0, slen)
     p2 = p1 + 1 + random.randrange(0, slen)
     p3 = p2 + 1 + random.randrange(0, slen)
-    # Combine 1st and 4th slice in order
-    # Combine 3rd and 2nd slice in order
-    # return the combination
-    return sprime
+    p4 = len(sprime) - 1
+    if DEBUG:
+        print("p1: ", p1)
+        print("p2: ", p2)
+        print("p3: ", p3)
+        print("p4: ", p4)
+    # Combine 1st and 4th slice
+    # Combine 3rd and 2nd slice
+    slice1 = sprime[0:p1]
+    slice2 = sprime[p1:p2]
+    slice3 = sprime[p2:p3]
+    slice4 = sprime[p3:p4]
+    # combine
+    sprime = slice1 + slice4 + slice3 + slice2
+    #print(sprime)
+    return s
 
 
 # define params for gilsrvnd
-IMAX = 10
+IMAX = 100
 IILS = min(100, len(dist_matrix))
 R = [0, 0.01, 0.02, 0.05, 0.1, 0.25]
 
@@ -268,4 +305,3 @@ sol = gilsrvnd(IMAX, IILS, R)
 print("My program took", time.time() - start_time, "to run")
 print(sol)
 print(cost(sol, False))
-
