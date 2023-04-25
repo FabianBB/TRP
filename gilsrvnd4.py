@@ -8,7 +8,7 @@ import time
 
 DEBUG = False
 
-problem = tsplib95.load('Instances/f10.tsp')
+problem = tsplib95.load('Instances/dantzig42.tsp')
 print(problem.name)
 graph = problem.get_graph()
 print(graph)
@@ -20,10 +20,10 @@ print("")
 # modify the dist matrix to make it a path
 # so everything should be infinity except for the diagonal
 def makePathMat(mat):
-    for i in range(len(dist_matrix)):
-        for j in range(len(dist_matrix)):
+    for i in range(len(mat)):
+        for j in range(len(mat)):
             if abs(i - j) > 1:
-                dist_matrix[i, j] = math.inf
+                mat[i, j] = math.inf
     return mat
 
 # modify dist matrix randomly (with seed) to make it incomplete
@@ -31,15 +31,15 @@ def makePathMat(mat):
 # seed 2 does not work (makes inf solution)
 def makeIncompleteMat(mat, seed=0):
     random.seed(seed)
-    for i in range(len(dist_matrix)):
-        for j in range(len(dist_matrix)):
+    for i in range(len(mat)):
+        for j in range(len(mat)):
             if i != j:
                 if random.randint(0, 1) == 0:
-                    dist_matrix[i, j] = math.inf
-    print(mat)
+                    mat[i, j] = math.inf
+    #print(mat)
     return mat
 
-makeIncompleteMat(dist_matrix, 0)
+#makeIncompleteMat(dist_matrix, 0)
 
 # cost function
 # assumes a return to depot at the end of the tour TODO: make this optional
