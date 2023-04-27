@@ -8,42 +8,31 @@ import time
 
 DEBUG = False
 
-problem = tsplib95.load('Instances/berlin52.tsp')
-graph = problem.get_graph()
-dist_matrix = nx.to_numpy_matrix(graph)
 
+def run(instance):
+    problem = tsplib95.load('Instances/' + instance)
+    graph = problem.get_graph()
+    dist_matrix = nx.to_numpy_matrix(graph)
 
+    # define params for gilsrvnd
+    IMAX = 100
+    IILS = min(100, len(dist_matrix))
+    R = [0, 0.01, 0.02, 0.05, 0.1, 0.25]
 
-# modify the dist matrix to make it a path
-# so everything should be infinity except for the diagonal
-def makePathMat(mat):
-    for i in range(len(mat)):
-        for j in range(len(mat)):
-            if abs(i - j) > 1:
-                mat[i, j] = math.inf
-    return mat
+    start_time = time.time()
 
-# modify dist matrix randomly (with seed) to make it incomplete
-# some values should be inf (except the diagonal)
-# seed 2 does not work (makes inf solution)
-def makeIncompleteMat(mat, seed=0):
-    random.seed(seed)
-    for i in range(len(mat)):
-        for j in range(len(mat)):
-            if i != j:
-                if random.randint(0, 1) == 0:
-                    mat[i, j] = math.inf
-    #print(mat)
-    return mat
+    sol = gilsrvnd(IMAX, IILS, R, dist_matrix)
 
-#makeIncompleteMat(dist_matrix, 0)
+    print("My program took", time.time() - start_time, "to run")
+    return sol, cost(sol, dist_matrix), time.time() - start_time
+
 
 # cost function
 # assumes a return to depot at the end of the tour TODO: make this optional
 # calculate the cost of a tour
 # the cost is defined as the sum of first arrival times to each vertex
 # the first arrival time to a vertex is the sum of the distances from the depot to the vertex
-def cost(s, show=False):
+def cost(s, dist_matrix, show=False):
     cost = 0
     for i in range(len(s) - 1):
         cost += (len(s) - i - 1) * dist_matrix[s[i], s[i + 1]]
@@ -64,24 +53,24 @@ def cost(s, show=False):
 # It is important to mention that the perturbation is always performed on
 # the best current solution sprime of a given iteration (acceptance criterion). Finally,
 # the heuristic returns the best solution s* among all iterations.
-def gilsrvnd(IMAX, IILS, R):
+def gilsrvnd(IMAX, IILS, R, dist_matrix):
     fstar = math.inf
     sstar = []
     for i in range(IMAX):
         alpha = random.choice(R)
-        s = construct(alpha)
+        s = construct(alpha, dist_matrix)
         sPrime = s
         iterILS = 0
         while iterILS < IILS:
-            s = RVND(s)
-            if cost(s) < cost(sPrime):
+            s = RVND(s, dist_matrix)
+            if cost(s, dist_matrix) < cost(sPrime, dist_matrix):
                 sPrime = s
                 iterILS = 0
             s = Perturb(sPrime)
             iterILS += 1
-        if cost(sPrime) < fstar:
+        if cost(sPrime, dist_matrix) < fstar:
             sstar = sPrime
-            fstar = cost(sPrime)
+            fstar = cost(sPrime, dist_matrix)
     return sstar if len(sstar) > 0 else sPrime
 
 
@@ -93,7 +82,7 @@ def gilsrvnd(IMAX, IILS, R):
 # to s. When the set of the alpha% best candidates is of size less than one or when a = 0, the algorithm chooses the
 # best candidate. The constructive procedure terminates when all customers are added to s.
 
-def construct(alpha):
+def construct(alpha, dist_matrix):
     s = [0]
     n = len(dist_matrix)
     CL = list(range(1, n))
@@ -110,8 +99,8 @@ def construct(alpha):
         s.append(c)
         r = c
         CL.remove(r)
-        #print("construct", s)
-    #print("const", s)
+        # print("construct", s)
+    # print("const", s)
     return s
 
 
@@ -133,7 +122,7 @@ def construct(alpha):
 # Or-opt3—N(5)—Three adjacent customers are reallocated to
 # another position of the tour.
 
-def RVND(s):
+def RVND(s, dist_matrix):
     NL = ["swap", "two_opt", "reinsertion", "or_opt2", "or_opt3"]
     sprime = s.copy()
     while len(NL) > 0:
@@ -159,7 +148,7 @@ def RVND(s):
             print(s)
             print(sprime)
 
-        if cost(sprime) < cost(s):
+        if cost(sprime, dist_matrix) < cost(s, dist_matrix):
             s = sprime
             NL = ["swap", "two_opt", "reinsertion", "or_opt2", "or_opt3"]
         else:
@@ -228,7 +217,7 @@ def or_opt2(s):
 # Or-opt3 Three adjacent customers are reallocated to another position of the tour.
 # works
 def or_opt3(s):
-    #return s if True else s
+    # return s if True else s
     sprime = s.copy()
 
     n = len(sprime)
@@ -242,7 +231,6 @@ def or_opt3(s):
     lst = sprime[:i] + sprime[i + 3:]
     # insert
     sprime = lst[:j] + sub + lst[j:]
-
 
     return sprime
 
@@ -286,19 +274,5 @@ def Perturb(s):
     slice4 = sprime[p3:p4]
     # combine
     sprime = slice1 + slice4 + slice3 + slice2
-    #print(sprime)
+    # print(sprime)
     return s
-
-
-# define params for gilsrvnd
-IMAX = 100
-IILS = min(100, len(dist_matrix))
-R = [0, 0.01, 0.02, 0.05, 0.1, 0.25]
-
-start_time = time.time()
-
-sol = gilsrvnd(IMAX, IILS, R)
-
-print("My program took", time.time() - start_time, "to run")
-print(sol)
-print(cost(sol, False))
