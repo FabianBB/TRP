@@ -8,7 +8,7 @@ import tsplib95
 import matplotlib.pyplot as plt
 
 # Plots of city coords
-do_visualisation = False
+do_visualisation = True
 # Save the best solution to xbest.log
 save_xbest = False
 # candidate list for local search
@@ -388,7 +388,7 @@ def dbmea(n_ind, n_clones, n_inf, i_seg, i_trans, n_cl, dist_matrix, cities_matr
     if do_visualisation:
         c = cost(xbest, dist_matrix)
         ptitle = "TRP Cost=" + str(c)
-        visualise(xbest, cities_matrix, ptitle, "before.png")
+        visualise(xbest, cities_matrix, ptitle, "DBMEA_before.png")
 
     if use_candidates_list:
         cl = generate_cl(dist_matrix, n_cl)
@@ -409,7 +409,7 @@ def dbmea(n_ind, n_clones, n_inf, i_seg, i_trans, n_cl, dist_matrix, cities_matr
     if do_visualisation:
         c = cost(pop[0], dist_matrix)
         ptitle = "TRP Cost=" + str(c)
-        visualise(xbest, cities_matrix, ptitle, "after.png")
+        visualise(xbest, cities_matrix, ptitle, "DBMEA_after.png")
 
     if save_xbest:
         with open("xbest.log", 'w') as f:

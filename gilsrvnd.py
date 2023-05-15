@@ -1,27 +1,36 @@
 import math
-import numpy as np
 import random
-import sys
-import tsplib95
-import networkx as nx
 import time
+
+import networkx as nx
+import tsplib95
+import matplotlib.pyplot as plt
+import numpy as np
 
 DEBUG = False
 
+do_visualisation = True
 
 def run(instance):
     problem = tsplib95.load('Instances/' + instance)
     graph = problem.get_graph()
     dist_matrix = nx.to_numpy_matrix(graph)
 
+    n = len(graph.nodes)
+
     # define params for gilsrvnd
     IMAX = 100
     IILS = min(100, len(dist_matrix))
     R = [0, 0.01, 0.02, 0.05, 0.1, 0.25]
 
+    cities_matrix = np.zeros((n, 2))
+    for i in range(0, n):
+        # ensure numpy matrix
+        cities_matrix[i] = problem.get_display(i + 1)
+
     start_time = time.time()
 
-    sol = gilsrvnd(IMAX, IILS, R, dist_matrix)
+    sol = gilsrvnd(IMAX, IILS, R, dist_matrix, cities_matrix)
 
     print("My program took", time.time() - start_time, "to run")
     return sol, cost(sol, dist_matrix), time.time() - start_time
@@ -41,6 +50,33 @@ def cost(s, dist_matrix, show=False):
     return cost
 
 
+# cool datascience visualizations
+def visualise(solution, cities, plot_title="TRP", filename="temp.png"):
+    x = cities[:, 0]
+    y = cities[:, 1]
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(x, y, color='red')
+
+    # Plot the solution path
+    solution_x = x[solution]
+    solution_y = y[solution]
+    plt.plot(solution_x, solution_y, 'b-', linewidth=0.5)
+
+    # Connect the last first cities, should not be needed as we're doing TRP instead of TSP, but it looks nicer
+    plt.plot([solution_x[-1], solution_x[0]], [solution_y[-1], solution_y[0]], 'b-', linewidth=0.5)
+
+    # Label each point with city index
+    for i, (xi, yi) in enumerate(zip(x, y)):
+        plt.text(xi, yi, str(i), color='black', ha='center', va='center')
+
+    # Set plot title and labels
+    plt.title(plot_title)
+
+    plt.savefig(filename)
+    plt.close()
+
+
 # define a method for GILS-RVND algorithm
 # GILS-RVND brings together the components of GRASP, ILS and RVND to solve TRP (Traveling Repairman Problem)
 # The method performs IMax iterations (lines 3–21),
@@ -53,12 +89,21 @@ def cost(s, dist_matrix, show=False):
 # It is important to mention that the perturbation is always performed on
 # the best current solution sprime of a given iteration (acceptance criterion). Finally,
 # the heuristic returns the best solution s* among all iterations.
-def gilsrvnd(IMAX, IILS, R, dist_matrix):
+def gilsrvnd(IMAX, IILS, R, dist_matrix, cities_matrix):
     fstar = math.inf
     sstar = []
+    vis = True
     for i in range(IMAX):
         alpha = random.choice(R)
         s = construct(alpha, dist_matrix)
+
+        if vis and do_visualisation:
+            c = cost(s, dist_matrix)
+            ptitle = "TRP Cost=" + str(c)
+            visualise(s, cities_matrix, ptitle, "GILS_before.png")
+
+            vis = False
+
         sPrime = s
         iterILS = 0
         while iterILS < IILS:
@@ -71,6 +116,11 @@ def gilsrvnd(IMAX, IILS, R, dist_matrix):
         if cost(sPrime, dist_matrix) < fstar:
             sstar = sPrime
             fstar = cost(sPrime, dist_matrix)
+
+    if do_visualisation:
+        c = cost(sstar, dist_matrix)
+        ptitle = "TRP Cost=" + str(c)
+        visualise(sstar, cities_matrix, ptitle, "GILS_after.png")
     return sstar if len(sstar) > 0 else sPrime
 
 
