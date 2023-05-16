@@ -32,7 +32,7 @@ def run(instance):
 
     sol = gilsrvnd(IMAX, IILS, R, dist_matrix, cities_matrix)
 
-    print("My program took", time.time() - start_time, "to run")
+    #print("My program took", time.time() - start_time, "to run")
     return sol, cost(sol, dist_matrix), time.time() - start_time
 
 

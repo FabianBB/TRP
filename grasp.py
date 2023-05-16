@@ -12,11 +12,13 @@ def run(instance):
     graph = problem.get_graph()
     dist_matrix = nx.to_numpy_matrix(graph)
 
+    n = len(graph.nodes)
+
     start_time = time.time()
 
-    sol = grasp(0.1, dist_matrix)
+    sol = grasp(0.1, dist_matrix, lim=int(n*1.25))
 
-    print("My program took", time.time() - start_time, "to run")
+    #print("My program took", time.time() - start_time, "to run")
 
     return sol, cost(sol, dist_matrix), time.time() - start_time
 

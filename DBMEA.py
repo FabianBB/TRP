@@ -39,7 +39,7 @@ def run(instance):
     xbest, _ = dbmea(n_ind=100, n_clones=int(n / 15), n_inf=40, i_seg=int(n / 20), i_trans=int(n / 20),
                      n_cl=n_cl, dist_matrix=dist_matrix, cities_matrix=cities_matrix, maxIter=1)
 
-    print("My program took", time.time() - start_time, "to run")
+    #print("My program took", time.time() - start_time, "to run")
 
     return xbest, cost(xbest, dist_matrix), time.time() - start_time
 
@@ -403,7 +403,7 @@ def dbmea(n_ind, n_clones, n_inf, i_seg, i_trans, n_cl, dist_matrix, cities_matr
             xbest = pop[0]
             fbest = fitness(pop[0], dist_matrix)
 
-        print("cost best", cost(pop[0], dist_matrix), i)  # if i % 10 == 0 else None
+        #print("cost best", cost(pop[0], dist_matrix), i)  # if i % 10 == 0 else None
         # print("cost worst", cost(pop[90], dist_matrix), i) if i % 10 == 0 else None
 
     if do_visualisation:

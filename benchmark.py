@@ -5,24 +5,26 @@ import DBMEA
 import gilsrvnd
 import grasp
 
-problem = tsplib95.load('Instances/f10.tsp')
+instance = "kroA100.tsp"
+
+problem = tsplib95.load('Instances/' + instance)
 print(problem.name)
 graph = problem.get_graph()
 print(graph)
 dist_matrix = nx.to_numpy_matrix(graph)
 
-grasp_sol, grasp_cost, grasp_time = grasp.run("f10.tsp")
+grasp_sol, grasp_cost, grasp_time = grasp.run(instance)
 print("GRASP")
 print(grasp_sol)
 print(grasp_cost)
 
-DBMEA_sol, DBMEA_cost, DBMEA_time = DBMEA.run("berlin52.tsp")
+DBMEA_sol, DBMEA_cost, DBMEA_time = DBMEA.run(instance)
 print("DBMEA")
 print(DBMEA_sol)
 print(DBMEA_cost)
 
 
-gilsrvnd_sol, gilsrvnd_cost, gilsrvnd_time = gilsrvnd.run("berlin52.tsp")
+gilsrvnd_sol, gilsrvnd_cost, gilsrvnd_time = gilsrvnd.run(instance)
 print("GILSRVND")
 print(gilsrvnd_sol)
 print(gilsrvnd_cost)
