@@ -9,7 +9,7 @@ import numpy as np
 
 DEBUG = False
 
-do_visualisation = True
+do_visualisation = False
 
 def run(instance):
     problem = tsplib95.load('Instances/' + instance)

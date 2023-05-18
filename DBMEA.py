@@ -8,7 +8,7 @@ import tsplib95
 import matplotlib.pyplot as plt
 
 # Plots of city coords
-do_visualisation = True
+do_visualisation = False
 # Save the best solution to xbest.log
 save_xbest = False
 # candidate list for local search
