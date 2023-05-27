@@ -8,7 +8,7 @@ import time
 
 
 def run(instance):
-    problem = tsplib95.load('Instances/' + instance)
+    problem = tsplib95.load(instance)
     graph = problem.get_graph()
     dist_matrix = nx.to_numpy_matrix(graph)
 
@@ -16,7 +16,7 @@ def run(instance):
 
     start_time = time.time()
 
-    sol = grasp(0.1, dist_matrix, lim=int(n*1.25))
+    sol = grasp(0.1, dist_matrix, lim=int(n*2))
 
     #print("My program took", time.time() - start_time, "to run")
 

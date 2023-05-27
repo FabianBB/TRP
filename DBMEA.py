@@ -16,7 +16,7 @@ use_candidates_list = True
 
 
 def run(instance):
-    problem = tsplib95.load('Instances/' + instance)
+    problem = tsplib95.load(instance)
     graph = problem.get_graph()
     dist_matrix = nx.to_numpy_matrix(graph)
 
