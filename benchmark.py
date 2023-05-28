@@ -5,7 +5,7 @@ import DBMEA
 import gilsrvnd
 import grasp
 
-instance = "line_10_3.tsp"
+instance = "Instances/line_10_3.tsp"
 
 problem = tsplib95.load(instance)
 print(problem.name)
