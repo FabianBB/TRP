@@ -390,6 +390,7 @@ def dbmea(n_ind, n_clones, n_inf, i_seg, i_trans, n_cl, dist_matrix, cities_matr
         ptitle = "TRP Cost=" + str(c)
         visualise(xbest, cities_matrix, ptitle, "DBMEA_before.png")
 
+
     if use_candidates_list:
         cl = generate_cl(dist_matrix, n_cl)
 
