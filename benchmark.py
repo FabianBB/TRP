@@ -4,8 +4,9 @@ import tsplib95
 import DBMEA
 import gilsrvnd
 import grasp
+#9
 
-instance = "Instances/random_10_0.tsp"
+instance = "Difficult/GRASP_16_1.tsp"
 
 problem = tsplib95.load(instance)
 print(problem.name)
