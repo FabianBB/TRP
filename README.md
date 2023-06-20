@@ -1,8 +1,7 @@
 # Meta-Learning The Traveling Repairman Problem: Extending Existing Algorithms By Identifying And Targetting Difficult Instances.
 
 
-The traveling repairman problem (TRP), also known
-as the minimal latency problem, aims at finding a Hamiltonian
+The traveling repairman problem (TRP), also known as the minimal latency problem, aims at finding a Hamiltonian
 cycle such that the total latency is minimized. Many approaches
 exist to solve the TRP, all of which have varied performance.
 Here, the focus lies on two state-of-the-art meta-heuristics, as
