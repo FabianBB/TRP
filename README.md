@@ -20,3 +20,6 @@ running a single algorithm, as well as good predictive power of
 the meta-features.
 
 Index Terms—Traveling Repairman, Minimum Latency Problem, Meta-algorithms, Meta-heuristics, Algorithm Selection
+
+
+The code is quite messy, however all results are stored in the matrices folder. The most important files are gilsrvnd.py, DBMEA.py and grasp.py. All necessary code can be executed via the notebooks, most of which are in the directory notebooks_old. Characteristics.ipynb shows how the features of each graph are computed.
