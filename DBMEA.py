@@ -284,7 +284,7 @@ def three_opt_cl(s, dist_matrix, cl, n_cl, max_iterations=1000):
     return best_solution
 
 
-# Iterative improvement based on 3 exchange.
+# Iterative improvement based on 3 exchange
 def three_opt(s, dist_matrix, max_iterations=1000):
     n = len(s)
     best_solution = s
